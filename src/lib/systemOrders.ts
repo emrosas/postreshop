@@ -27,13 +27,13 @@ export function handleProcessError(message: string, code: number) {
  * @returns The type of special order date if found, otherwise null.
  */
 export async function checkSpecialDate(
-  dateTime: string,
-): Promise<SpecialOrderDate["type"] | null> {
+  dateTime: string,): Promise<SpecialOrderDate["type"] | null> {
   const date = dateTime.split("T")[0];
-
   const specialDates: SpecialOrderDate[] = [
     { id: "1", date: "2025-12-30", type: "1" },
     { id: "2", date: "2025-12-31", type: "2" },
+    { id: "3", date: "2026-05-09", type: "1" },
+    { id: "4", date: "2026-05-10", type: "2" },
   ];
 
   const specialDate = specialDates.find((d) => d.date === date);

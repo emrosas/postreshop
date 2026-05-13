@@ -380,4 +380,5 @@ export function checkSaltilloOnSaturday(
   return true;
 }
 
-export const SUCURSALES_SALTILLO = ["50", "109", "520"];
+export const SUCURSALES_SALTILLO = ["50", "109", "520", "536"];
+export const SUCURSALES_CIERRE9 = ["50", "109", "520", "536"];

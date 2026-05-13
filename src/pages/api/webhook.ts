@@ -185,21 +185,18 @@ export const POST: APIRoute = async ({ request, callAction }) => {
 
       if (error) {
         console.error(error.message);
-        break;
+        return new Response("Error updating order", { status: 500 });
       } else if (data) {
-        console.log(JSON.stringify(data, null, 2)); // log the data);
         console.log("Uploading order to system...");
         const { data: orderData, error: orderError } =
           await uploadOrderToSystem(data, numberOrderId);
-        console.log("Order upload returned:");
         if (orderError) {
-          console.error(orderError.message);
-          break;
+          // Retorna 500 para que Stripe reintente el webhook automáticamente
+          console.error("RMS error:", orderError.message);
+          return new Response("Error uploading to RMS", { status: 500 });
         } else if (orderData) {
-          console.log(JSON.stringify(orderData, null, 2)); // log the data);
           if (!email) {
-            handleProcessError("No email provided", 400);
-            break;
+            return new Response("No email provided", { status: 500 });
           }
           await sendEmailReceipt(numberOrderId, email, callAction);
           await db.insert(ProcessedEvents).values({

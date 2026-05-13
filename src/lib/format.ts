@@ -42,3 +42,18 @@ export function formatDateString(dateString: string): string {
 
   return formattedDate;
 }
+
+export function formatDateTimeString(dateString: string): string {
+  if (!dateString) return "-";
+  const date = new Date(dateString);
+  if (isNaN(date.getTime())) return "-";
+  return date.toLocaleString("es-MX", {
+    timeZone: "America/Monterrey",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false,
+  });
+}

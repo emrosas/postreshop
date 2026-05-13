@@ -17,6 +17,7 @@ import {
   checkGiftOnPasteleria,
   checkSaltilloOnSaturday,
   SUCURSALES_SALTILLO,
+  SUCURSALES_CIERRE9,
 } from "@/lib/orderConditions";
 import { checkRoscaAvailability } from "@/lib/specialOrderConditions";
 import {
@@ -151,36 +152,35 @@ export const orders = {
       // ---------------------------------------------------------
 
       // ---------------------------------------------------------
-      // 🕒 REGLA SALTILLO: Límite 9:00 PM (21:00)
-      // IDs: 50 (Carranza), 109 (Parque Centro), 520 (Parque Centro P.)
+      // 🕒 REGLA SUCURSALES QUE CIERRAN: Límite 9:00 PM (21:00)
+      // IDs: 50 (Carranza), 109 (Parque Centro), 520 (Parque Centro P.), 536 (Herradura) 
       // ---------------------------------------------------------
+      const now = new Date();
 
-      if (SUCURSALES_SALTILLO.includes(sucursal)) {
-        // 1. Obtener hora exacta en México
-        const now = new Date();
-        const mexicoDate = new Date(
-          now.toLocaleString("en-US", { timeZone: "America/Monterrey" }),
-        );
-        const currentHour = mexicoDate.getHours();
+      // hora México (segura)
+      const mexicoTime = new Date(
+        now.toLocaleString("en-US", { timeZone: "America/Monterrey" })
+      );
 
-        // 2. Verificar si el pedido es para "HOY"
-        const year = mexicoDate.getFullYear();
-        const month = String(mexicoDate.getMonth() + 1).padStart(2, "0");
-        const day = String(mexicoDate.getDate()).padStart(2, "0");
-        const todayString = `${year}-${month}-${day}`;
+      const currentHour = mexicoTime.getHours();
 
-        const isToday = fecha === todayString;
+      // fecha México en formato YYYY-MM-DD
+      const year = mexicoTime.getFullYear();
+      const month = String(mexicoTime.getMonth() + 1).padStart(2, "0");
+      const day = String(mexicoTime.getDate()).padStart(2, "0");
+      const todayString = `${year}-${month}-${day}`;
 
-        // 3. AQUÍ ESTÁ EL CAMBIO: Usamos 21 (9 PM)
-        // Si tu código tenía un '15' aquí, eso era lo que bloqueaba a las 3 PM.
+      const isToday = fecha?.slice(0, 10) === todayString;
+
+      if (SUCURSALES_CIERRE9.includes(String(sucursal).trim())) {
         if (isToday && currentHour >= 21) {
           throw new ActionError({
             code: "BAD_REQUEST",
-            message:
-              "En Saltillo el horario de pedidos finaliza a las 9:00 p.m.",
+            message: "En esta sucursal los pedidos finalizan a las 9:00 p.m.",
           });
         }
       }
+
       // ---------------------------------------------------------
 
       // Check if any products are blocked for the selected date and sucursal

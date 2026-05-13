@@ -181,9 +181,14 @@ export function DateTimeSelector({
     onTimeChange?.(newTime);
   };
   // 🔔 Calcular ventana de horarios según la fecha seleccionada
+  const SUCURSALES_CIERRE9 = ["50", "109", "520", "536"];
   const specialTimeWindow = getSpecialTimeWindow(date);
   const minTime = specialTimeWindow ? specialTimeWindow.min : new Time(13);
-  const maxTime = specialTimeWindow ? specialTimeWindow.max : new Time(22);
+  const defaultMaxTime =
+    selectedSucursalId && SUCURSALES_CIERRE9.includes(selectedSucursalId)
+      ? new Time(21)
+      : new Time(22);
+  const maxTime = specialTimeWindow ? specialTimeWindow.max : defaultMaxTime;
   return (
     <div className="grid grid-cols-2 gap-4">
       <div>
